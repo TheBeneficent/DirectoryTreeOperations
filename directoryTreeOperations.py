@@ -69,6 +69,8 @@ def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_bas
                     
                 if file_types:
                     for ext in file_types:
+                        if not ext.startswith('.'):
+                            ext = '.'+ext
                         if file_tree[i].lower().endswith(ext):
                             file_with_ext.append(file_tree[i])
                             file_dir_with_ext.append(file_dir[i])
@@ -111,9 +113,9 @@ def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_bas
     while n<l:
         file_with_ext_str += str(n+1) + ') '+str(file_with_ext[n])+'\n'
         n+=1
-    print(file_types)
-    print(len(file_types))
+    
     return {"file_count": i,"dir_count":j, "file_tree": file_tree, "rel_file_tree": rel_file_tree, "rel_file_tree_str": str_file_tree, "dst_file_tree": dst_file_tree, "file_with_ext": file_with_ext, "file_dir_with_ext":file_dir_with_ext, "file_with_ext_str": file_with_ext_str, "dst_file_with_ext":dst_file_with_ext, "dst_dir_with_ext":dst_dir_with_ext, "file_dir":file_dir, "rel_file_dir":rel_file_dir, "dir_tree":dir_tree,"rel_dir_tree":rel_dir_tree,"rel_dir_tree_str":str_dir_tree, "dst_dir_tree":dst_dir_tree}
+
 def deletefile(X):
     for i in X:
         s=''
@@ -140,9 +142,16 @@ def rec_copy(srclist,destlist,dst_dir_tree):
     
     message=''
     message += makedir(dst_dir_tree)
-    
+
+    if message:
+        return 'Error creating destination directories!\n'+message
+    copy_msg=''
     for i in range(0,l):
-        message += shutil.copy2(srclist[i],destlist[i])
+        try:
+            copy_msg = shutil.copy2(srclist[i],destlist[i])
+            message += str(i+1)+ ') Successfully copied ' + copy_msg + '\n'
+        except:
+            message += str(i+1)+ ') Error copying '+copy_msg+'\n'
     return message
 def rec_move(srclist,destlist,dst_dir_tree):
     message=''
@@ -194,7 +203,7 @@ src_label=tk.Label(text="Source")
 src_scroll_view = scrolledtext.ScrolledText(win, wrap=tk.WORD)
 dst_label=tk.Label(text="Destination")
 dst_scroll_view = scrolledtext.ScrolledText(win, wrap=tk.WORD)
-oper_state_label=tk.Label(text=operate_state)
+oper_state_scroll_view=scrolledtext.ScrolledText(win,wrap=tk.WORD)
 
 
 def browsetrig():
@@ -205,14 +214,14 @@ def browsetrig():
     global results
     global dir_check_state
     operate_state=''
-    oper_state_label.config(text=operate_state)
+    oper_state_scroll_view.delete('1.0', tk.END)
     folder = filedialog.askdirectory()
     path_dir_input.delete('0', tk.END)
     path_dir_input.insert('0', folder)
     folder = path_dir_input.get()
     if folder:
-        operate_state='Source set!'
-    oper_state_label.config(text=operate_state)
+        operate_state='Source set!\n'
+    oper_state_scroll_view.insert(tk.INSERT, operate_state)
     # results = fileTree(folder,dest_drive=dst_folder)
     # tree_scroll_view.delete('1.0', tk.END)
     # tree_scroll_view.insert(tk.INSERT, 'Directories:\n'+results["rel_dir_tree_str"]+'\nFiles:\n'+results["rel_file_tree_str"])
@@ -224,17 +233,17 @@ def dstbrowsetrig():
     global results
     global dir_check_state
     operate_state=''
-    oper_state_label.config(text=operate_state)
+    oper_state_scroll_view.insert(tk.INSERT, operate_state)
     dst_folder=filedialog.askdirectory()
     dst_dir_input.delete('0', tk.END)
     dst_dir_input.insert('0', dst_folder)
     dst_folder=dst_dir_input.get()
     if folder and dst_folder:
-        operate_state='Destinatin set!'
+        operate_state='Destinatin set!\n'
         results = fileTree(folder,dst_drive=dst_folder)
         tree_scroll_view.delete('1.0', tk.END)
-        tree_scroll_view.insert(tk.INSERT, 'Directories:\n'+results["rel_dir_tree_str"]+'\nFiles:\n'+results["rel_file_tree_str"])
-    print(results)
+        tree_scroll_view.insert(tk.INSERT, 'Directories:\n'+results["rel_dir_tree_str"]+'\n\n----------\n\nFiles:\n'+results["rel_file_tree_str"])
+    oper_state_scroll_view.insert(tk.INSERT, operate_state)
 
 def filtertrig():
     global folder
@@ -244,14 +253,15 @@ def filtertrig():
     global results
     global dir_check_state
     operate_state=''
-    oper_state_label.config(text=operate_state)
+    oper_state_scroll_view.delete('1.0', tk.END)
     folder = path_dir_input.get()
     dst_folder=dst_dir_input.get()
     file_extensions=ext_text_input.get()
     results=fileTree(folder,file_types=file_extensions,dst_drive=dst_folder)
     filtered_scroll_view.delete('1.0', tk.END)
     filtered_scroll_view.insert(tk.INSERT,results["file_with_ext_str"])
-    oper_state_label.config(text=results["dst_file_with_ext"])
+    oper_state_scroll_view.insert(tk.INSERT, 'Destination files would be like:\n')
+    oper_state_scroll_view.insert(tk.INSERT, results["dst_file_with_ext"])
 
     
 def copytrig():
@@ -263,7 +273,7 @@ def copytrig():
     global dir_check_state
     global operate_state
     operate_state=''
-    oper_state_label.config(text=operate_state)
+    oper_state_scroll_view.delete('1.0', tk.END)
     folder = path_dir_input.get()
     dst_folder=dst_dir_input.get()
     file_extensions=ext_text_input.get()
@@ -282,7 +292,7 @@ def copytrig():
             operate_state=res
         else:
             operate_state="Copied successfully!"
-    oper_state_label.config(text=operate_state)
+    oper_state_scroll_view.insert(tk.INSERT, operate_state)
 def movetrig():
     global folder
     global dst_folder
@@ -292,7 +302,7 @@ def movetrig():
     global dir_check_state
     global operate_state
     operate_state=''
-    oper_state_label.config(text=operate_state)
+    oper_state_scroll_view.delete('1.0', tk.END)
     folder = path_dir_input.get()
     dst_folder=dst_dir_input.get()
     file_extensions=ext_text_input.get()
@@ -318,7 +328,7 @@ def movetrig():
             operate_state=res
         else:
             operate_state="Copied successfully!"
-    oper_state_label.config(text=operate_state)
+    oper_state_scroll_view.insert(tk.INSERT, operate_state)
 def checktrig():
     global folder
     global dst_folder
@@ -335,14 +345,17 @@ def mkdirtrig():
     global results
     global dir_check_state
     operate_state=''
-    oper_state_label.config(text=operate_state)
+    oper_state_scroll_view.delete('1.0', tk.END)
     folder = path_dir_input.get()
     dst_folder=dst_dir_input.get()
     file_extensions=ext_text_input.get()
     if not results:
         results = fileTree(folder,dst_drive=dst_folder)
     operate_state=makedir(results["dst_dir_tree"])
-    oper_state_label.config(text=operate_state)
+    if not operate_state.replace(' ',''):
+        operate_state='Paths made successfully!\n'
+    oper_state_scroll_view.insert(tk.INSERT, operate_state)
+    
 browse_btn = tk.Button(text="Browse", command=browsetrig)
 dest_browse_btn=tk.Button(text="Browse",command=dstbrowsetrig)
 filter_btn=tk.Button(text="Filter",command=filtertrig)
@@ -376,6 +389,6 @@ move_btn.place(x=x2-2*x1,y=y,width=w_btn,height=h)
 mkdir_btn.place(x=x2,y=y,width=w_btn*2,height=h)
 filter_btn.place(x=3*x1+x2,y=y,width=w_btn,height=h)
 y += t1
-oper_state_label.place(x=x1,y=y,width=w2,height=5*h)
+oper_state_scroll_view.place(x=x1,y=y,width=w2+w_btn,height=3*h)
 
 win.mainloop()
