@@ -191,7 +191,7 @@ w2=2*w
 w_btn=60
 
 win = tk.Tk()
-win.title("Mostanad File Copier 0.2 \u00A9 github.com/TheBeneficent")
+win.title("Mostanad File Copier 0.3 \u00A9 github.com/TheBeneficent")
 win.geometry(str(win_w)+"x"+str(win_h))
 dir_label = tk.Label(text="Enter the source directory")
 path_dir_input = tk.Entry()
