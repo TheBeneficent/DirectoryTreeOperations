@@ -7,7 +7,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import scrolledtext
 
-def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_base=True):
+def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_base=True, dst_files_type=''):
     if platform.system() == "Windows":
         path_type = 'windows'
         if dst_drive:
@@ -35,6 +35,7 @@ def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_bas
     dst_dir_tree = []
     dst_file_with_ext=[]
     dst_dir_with_ext=[]
+    dst_file_with_dst_ext=[]
     dir_with_ext = []
     str_file_tree = ''
     str_dir_tree=''
@@ -42,6 +43,8 @@ def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_bas
     dst_file_with_ext_str=''
     src_size=0
     src_with_ext_size=0
+    if dst_files_type and not dst_files_type.startswith('.'):
+        dst_files_type = '.' + dst_files_type
     if file_types:
         file_types = list(map(str, file_types.replace(' ','').split(',')))
     for path, subdirs, files in os.walk(p):
@@ -101,6 +104,8 @@ def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_bas
                             file_dir_with_ext.append(file_dir[i])
                             src_with_ext_size += os.path.getsize(file_tree[i])
                             dst_file_with_ext.append(dst_file_tree[i])
+                            if(dst_files_type):
+                                dst_file_with_dst_ext.append(dst_file_tree[i][:dst_file_tree[i].rfind('.')]+dst_files_type)
                             dst_dir_with_ext.append(dst_file_tree[i].rpartition(os.sep)[0])
                             
                 src_size += os.path.getsize(file_tree[i])
@@ -117,7 +122,7 @@ def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_bas
         dst_file_with_ext_str += str(n+1) + ') '+str(dst_file_with_ext[n])+'\n'
         n+=1
     
-    return {"file_count": i,"dir_count":j, "file_with_ext_count":len(file_with_ext), "file_dir_with_ext_count":len(file_dir_with_ext), "file_tree": file_tree, "rel_file_tree": rel_file_tree, "rel_file_tree_str": str_file_tree, "dst_file_tree": dst_file_tree, "file_with_ext": file_with_ext, "file_dir_with_ext":file_dir_with_ext, "file_with_ext_str": file_with_ext_str, "dst_file_with_ext":dst_file_with_ext, "dst_file_with_ext_str":dst_file_with_ext_str, "dst_dir_with_ext":dst_dir_with_ext, "file_dir":file_dir, "rel_file_dir":rel_file_dir, "dir_tree":dir_tree,"rel_dir_tree":rel_dir_tree,"rel_dir_tree_str":str_dir_tree, "dst_dir_tree":dst_dir_tree, "src_size":src_size,"src_with_ext_size":src_with_ext_size}
+    return {"file_count": i,"dir_count":j, "file_with_ext_count":len(file_with_ext), "file_dir_with_ext_count":len(file_dir_with_ext), "file_tree": file_tree, "rel_file_tree": rel_file_tree, "rel_file_tree_str": str_file_tree, "dst_file_tree": dst_file_tree, "file_with_ext": file_with_ext, "file_dir_with_ext":file_dir_with_ext, "file_with_ext_str": file_with_ext_str, "dst_file_with_ext":dst_file_with_ext, "dst_file_with_ext_str":dst_file_with_ext_str, "dst_file_with_dst_ext":dst_file_with_dst_ext, "dst_dir_with_ext":dst_dir_with_ext, "file_dir":file_dir, "rel_file_dir":rel_file_dir, "dir_tree":dir_tree,"rel_dir_tree":rel_dir_tree,"rel_dir_tree_str":str_dir_tree, "dst_dir_tree":dst_dir_tree, "src_size":src_size,"src_with_ext_size":src_with_ext_size}
 
 def deletefile(X):
     for i in X:
