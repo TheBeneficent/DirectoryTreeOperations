@@ -41,6 +41,7 @@ def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_bas
     str_dir_tree=''
     file_with_ext_str = ''
     dst_file_with_ext_str=''
+    dst_file_with_dst_ext_str=''
     src_size=0
     src_with_ext_size=0
     if dst_files_type and not dst_files_type.startswith('.'):
@@ -53,17 +54,15 @@ def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_bas
                 if path_type == 'windows':
                     if inc_base:
                         dir_tree.append(str(os.path.join(base_dir, pathlib.PureWindowsPath(path, name))))
-                        rel_dir_tree.append(str(os.path.join(base_dir, pathlib.PureWindowsPath(dir_tree[j][path_len+1:]))))
                     else:
                         dir_tree.append(str( pathlib.PureWindowsPath(path, name)))
-                        rel_dir_tree.append(str(pathlib.PureWindowsPath(dir_tree[j][path_len+1:])))
+                    rel_dir_tree.append(str(pathlib.PureWindowsPath(dir_tree[j][path_len+1:])))
                 else:
                     if inc_base:
                         dir_tree.append(str(os.path.join(base_dir, pathlib.PurePosixPath(path, name))))
-                        rel_dir_tree.append(str(os.path.join(base_dir, pathlib.PurePosixPath(dir_tree[j][path_len+1:]))))
                     else:
                         dir_tree.append(str(pathlib.PurePosixPath(path, name)))
-                        rel_dir_tree.append(str(pathlib.PurePosixPath(dir_tree[j][path_len+1:])))
+                    rel_dir_tree.append(str(pathlib.PurePosixPath(dir_tree[j][path_len+1:])))    
                 
                 if dst_drive:
                     dst_dir_tree.append( str(os.path.join(dst_drive,rel_dir_tree[j])) )
@@ -120,9 +119,10 @@ def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_bas
     n=0
     while n<l:
         dst_file_with_ext_str += str(n+1) + ') '+str(dst_file_with_ext[n])+'\n'
+        dst_file_with_dst_ext_str += str(n+1) + ') '+str(dst_file_with_dst_ext[n])+'\n'
         n+=1
     
-    return {"file_count": i,"dir_count":j, "file_with_ext_count":len(file_with_ext), "file_dir_with_ext_count":len(file_dir_with_ext), "file_tree": file_tree, "rel_file_tree": rel_file_tree, "rel_file_tree_str": str_file_tree, "dst_file_tree": dst_file_tree, "file_with_ext": file_with_ext, "file_dir_with_ext":file_dir_with_ext, "file_with_ext_str": file_with_ext_str, "dst_file_with_ext":dst_file_with_ext, "dst_file_with_ext_str":dst_file_with_ext_str, "dst_file_with_dst_ext":dst_file_with_dst_ext, "dst_dir_with_ext":dst_dir_with_ext, "file_dir":file_dir, "rel_file_dir":rel_file_dir, "dir_tree":dir_tree,"rel_dir_tree":rel_dir_tree,"rel_dir_tree_str":str_dir_tree, "dst_dir_tree":dst_dir_tree, "src_size":src_size,"src_with_ext_size":src_with_ext_size}
+    return {"file_count": i,"dir_count":j, "file_with_ext_count":len(file_with_ext), "file_dir_with_ext_count":len(file_dir_with_ext), "file_tree": file_tree, "rel_file_tree": rel_file_tree, "rel_file_tree_str": str_file_tree, "dst_file_tree": dst_file_tree, "file_with_ext": file_with_ext, "file_dir_with_ext":file_dir_with_ext, "file_with_ext_str": file_with_ext_str, "dst_file_with_ext":dst_file_with_ext, "dst_file_with_ext_str":dst_file_with_ext_str, "dst_file_with_dst_ext":dst_file_with_dst_ext, "dst_file_with_dst_ext_str":dst_file_with_dst_ext_str, "dst_dir_with_ext":dst_dir_with_ext, "file_dir":file_dir, "rel_file_dir":rel_file_dir, "dir_tree":dir_tree,"rel_dir_tree":rel_dir_tree,"rel_dir_tree_str":str_dir_tree, "dst_dir_tree":dst_dir_tree, "src_size":src_size,"src_with_ext_size":src_with_ext_size}
 
 def deletefile(X):
     for i in X:
