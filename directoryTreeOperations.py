@@ -7,7 +7,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import scrolledtext
 
-def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_base=True, dst_files_type=''):
+def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_base=True, dst_files_type='', prepend='', append=''):
     if platform.system() == "Windows":
         path_type = 'windows'
         if dst_drive:
@@ -92,7 +92,8 @@ def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_bas
                         rel_file_dir.append(str(pathlib.PurePosixPath(file_dir[i][path_len+1:])))
                     
                 if dst_drive:
-                    dst_file_tree.append(str(os.path.join(dst_drive,rel_file_tree[i])) )
+                    dst_file=str(os.path.join(dst_drive,rel_file_tree[i]))
+                    dst_file_tree.append(dst_file[:dst_file.rfind(os.sep)+1]+prepend+dst_file[dst_file.rfind(os.sep)+1:dst_file.rfind('.')]+append+dst_file[dst_file.rfind('.'):] )
                     
                 if file_types:
                     for extindex in range(0,len(file_types)):
