@@ -7,7 +7,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import scrolledtext
 
-def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_base=True, dst_files_type='', prepend='', append=''):
+def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_base=True, dst_files_type='', prepend='', append='', replace=''):
     if platform.system() == "Windows":
         path_type = 'windows'
         if dst_drive:
@@ -93,6 +93,8 @@ def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_bas
                     
                 if dst_drive:
                     dst_file=str(os.path.join(dst_drive,rel_file_tree[i]))
+                    if replace:
+                        dst_file=dst_file[:dst_file.rfind(os.sep)+1]+dst_file[dst_file.rfind(os.sep)+1:].replace(replace[0],replace[1])
                     dst_file_tree.append(dst_file[:dst_file.rfind(os.sep)+1]+prepend+dst_file[dst_file.rfind(os.sep)+1:dst_file.rfind('.')]+append+dst_file[dst_file.rfind('.'):] )
                     
                 if file_types:
@@ -120,7 +122,8 @@ def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_bas
     n=0
     while n<l:
         dst_file_with_ext_str += str(n+1) + ') '+str(dst_file_with_ext[n])+'\n'
-        dst_file_with_dst_ext_str += str(n+1) + ') '+str(dst_file_with_dst_ext[n])+'\n'
+        if(dst_files_type):
+            dst_file_with_dst_ext_str += str(n+1) + ') '+str(dst_file_with_dst_ext[n])+'\n'
         n+=1
     
     return {"file_count": i,"dir_count":j, "file_with_ext_count":len(file_with_ext), "file_dir_with_ext_count":len(file_dir_with_ext), "file_tree": file_tree, "rel_file_tree": rel_file_tree, "rel_file_tree_str": str_file_tree, "dst_file_tree": dst_file_tree, "file_with_ext": file_with_ext, "file_dir_with_ext":file_dir_with_ext, "file_with_ext_str": file_with_ext_str, "dst_file_with_ext":dst_file_with_ext, "dst_file_with_ext_str":dst_file_with_ext_str, "dst_file_with_dst_ext":dst_file_with_dst_ext, "dst_file_with_dst_ext_str":dst_file_with_dst_ext_str, "dst_dir_with_ext":dst_dir_with_ext, "file_dir":file_dir, "rel_file_dir":rel_file_dir, "dir_tree":dir_tree,"rel_dir_tree":rel_dir_tree,"rel_dir_tree_str":str_dir_tree, "dst_dir_tree":dst_dir_tree, "src_size":src_size,"src_with_ext_size":src_with_ext_size}
