@@ -7,7 +7,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import scrolledtext
 
-def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_base=True, dst_files_type='', prepend='', append='', replace=''):
+def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_base=True, dst_files_type='', prepend='', append='', replace='', pre_counter='', pre_counter_start=1, pre_counter_length=0, post_counter='', post_counter_start=1, post_counter_length=0):
     if platform.system() == "Windows":
         path_type = 'windows'
         if dst_drive:
@@ -44,6 +44,8 @@ def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_bas
     dst_file_with_dst_ext_str=''
     src_size=0
     src_with_ext_size=0
+    temp_pre_counter=''
+    temp_post_counter=''
     if dst_files_type and not dst_files_type.startswith('.'):
         dst_files_type = '.' + dst_files_type
     if file_types:
@@ -94,8 +96,19 @@ def fileTree(p, file_types='', dst_drive='',dirtree=True, filetree=True, inc_bas
                 if dst_drive:
                     dst_file=str(os.path.join(dst_drive,rel_file_tree[i]))
                     if replace:
-                        dst_file=dst_file[:dst_file.rfind(os.sep)+1]+dst_file[dst_file.rfind(os.sep)+1:].replace(replace[0],replace[1])
-                    dst_file_tree.append(dst_file[:dst_file.rfind(os.sep)+1]+prepend+dst_file[dst_file.rfind(os.sep)+1:dst_file.rfind('.')]+append+dst_file[dst_file.rfind('.'):] )
+                        for pair in replace:
+                            dst_file=dst_file[:dst_file.rfind(os.sep)+1]+dst_file[dst_file.rfind(os.sep)+1:].replace(pair[0],pair[1])
+                    if pre_counter:
+                        temp_pre_counter = pre_counter+str(pre_counter_start)
+                        pre_counter_start +=1
+                        if pre_counter_length:
+                            temp_pre_counter=temp_pre_counter[len(temp_pre_counter)-pre_counter_length:]
+                    if post_counter:
+                        temp_post_counter=post_counter+str(post_counter_start)
+                        post_counter_start +=1
+                        if post_counter_length:
+                            temp_post_counter=temp_post_counter[len(temp_post_counter)-post_counter_length:]
+                    dst_file_tree.append(dst_file[:dst_file.rfind(os.sep)+1]+temp_pre_counter+prepend+dst_file[dst_file.rfind(os.sep)+1:dst_file.rfind('.')]+append+temp_post_counter+dst_file[dst_file.rfind('.'):] )
                     
                 if file_types:
                     for extindex in range(0,len(file_types)):
